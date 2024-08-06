@@ -9,18 +9,21 @@ from six.moves import http_cookies as Cookie
 
 parser = argparse.ArgumentParser()
 parser.add_argument('command')
-parser.add_argument('url')
+# Positional argument for URL
+parser.add_argument('url', nargs='?', default=None, help='The URL to request.')
+parser.add_argument('--url', type=str, help='The URL to request (optional).')
 parser.add_argument('-d', '--data')
 parser.add_argument('-b', '--data-binary', '--data-raw', default=None)
-parser.add_argument('-X', default='')
+parser.add_argument('-X', '--request', default='')
 parser.add_argument('-H', '--header', action='append', default=[])
 parser.add_argument('--compressed', action='store_true')
-parser.add_argument('-k','--insecure', action='store_true')
+parser.add_argument('-k', '--insecure', action='store_true')
 parser.add_argument('--user', '-u', default=())
-parser.add_argument('-i','--include', action='store_true')
-parser.add_argument('-s','--silent', action='store_true')
+parser.add_argument('-i', '--include', action='store_true')
+parser.add_argument('-s', '--silent', action='store_true')
 parser.add_argument('-x', '--proxy', default={})
 parser.add_argument('-U', '--proxy-user', default='')
+parser.add_argument('--location', action='store_true')
 
 BASE_INDENT = " " * 4
 
@@ -35,14 +38,15 @@ def parse_context(curl_command):
     method = "get"
 
     tokens = shlex.split(normalize_newlines(curl_command))
+    print(f"Tokens: {tokens}")
     parsed_args = parser.parse_args(tokens)
 
     post_data = parsed_args.data or parsed_args.data_binary
     if post_data:
         method = 'post'
-
-    if parsed_args.X:
-        method = parsed_args.X.lower()
+    print(f"Parser args: {parsed_args}")
+    if parsed_args.request:
+        method = parsed_args.request.lower()
 
     cookie_dict = OrderedDict()
     quoted_headers = OrderedDict()

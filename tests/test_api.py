@@ -2,7 +2,6 @@ import sure  # Hey! Do not delete this import for the tests to pass
 
 import uncurl
 
-
 def test_basic_get():
     uncurl.parse("curl 'https://pypi.python.org/pypi/uncurl'").should.equal(
         """requests.get("https://pypi.python.org/pypi/uncurl",
@@ -13,6 +12,20 @@ def test_basic_get():
 )"""
     )
 
+def test_complex_curl():
+    url = "curl --request GET   --url http://46.250.249.219:5001/api/v1/procedures/1   --header 'Content-Type: application/json'"
+    context = uncurl.parse_context(url)
+    print('====================')
+    url = "curl --request GET   --url http://46.250.249.219:5001/api/v1/procedures/1   --header 'Content-Type: application/json'"
+    context = uncurl.parse_context(url)
+    print('====================')
+    url="curl --request GET --url http://46.250.249.219:5001/api/v1/procedures/1 --header 'Content-Type: application/json'"
+    context = uncurl.parse_context(url)
+    print('====================')
+    url = "curl --location --request GET 'http://46.250.249.219:5001/api/v1/procedures/1' --header 'Content-Type: application/json'"
+    context = uncurl.parse_context(url)
+    print('====================')
+    print(f"Test complex curl: {context}")
 
 def test_colon_header():
     uncurl.parse("curl 'https://pypi.python.org/pypi/uncurl' -H 'authority:mobile.twitter.com'").should.equal(
@@ -250,17 +263,18 @@ def test_parse_curl_with_proxy_and_proxy_auth():
 
 
 if __name__ == '__main__':
-    test_basic_get()
-    test_colon_header()
-    test_basic_headers()
-    test_cookies()
-    test_cookies_lowercase()
-    test_post()
-    test_post_with_dict_data()
-    test_post_with_string_data()
-    test_parse_curl_with_binary_data()
-    test_parse_curl_with_raw_data()
-    test_parse_curl_with_another_binary_data()
-    test_parse_curl_with_insecure_flag()
-    test_parse_curl_with_request_kargs()
-    test_parse_curl_with_proxy_and_proxy_auth()
+    # test_basic_get()
+    test_complex_curl()
+    # test_colon_header()
+    # test_basic_headers()
+    # test_cookies()
+    # test_cookies_lowercase()
+    # test_post()
+    # test_post_with_dict_data()
+    # test_post_with_string_data()
+    # test_parse_curl_with_binary_data()
+    # test_parse_curl_with_raw_data()
+    # test_parse_curl_with_another_binary_data()
+    # test_parse_curl_with_insecure_flag()
+    # test_parse_curl_with_request_kargs()
+    # test_parse_curl_with_proxy_and_proxy_auth()
