@@ -10,7 +10,6 @@ from six.moves import http_cookies as Cookie
 parser = argparse.ArgumentParser()
 parser.add_argument('command')
 # Positional argument for URL
-parser.add_argument('url', nargs='?', default=None, help='The URL to request.')
 parser.add_argument('--url', type=str, help='The URL to request (optional).')
 parser.add_argument('-d', '--data')
 parser.add_argument('-b', '--data-binary', '--data-raw', default=None)
@@ -39,7 +38,10 @@ def parse_context(curl_command):
 
     tokens = shlex.split(normalize_newlines(curl_command))
     print(f"Tokens: {tokens}")
-    parsed_args = parser.parse_args(tokens)
+    parsed_args, remaining_args = parser.parse_known_args(tokens)
+    if parsed_args.url is None and remaining_args:
+        # Assuming the URL is the last remaining argument
+        parsed_args.url = remaining_args[-1]
 
     post_data = parsed_args.data or parsed_args.data_binary
     if post_data:
@@ -107,12 +109,12 @@ def parse(curl_command, **kargs):
     if parsed_context.verify:
         verify_token = '\n{}verify=False'.format(BASE_INDENT)
 
-    requests_kargs=''
-    for k,v in sorted(kargs.items()):
-        requests_kargs += "{}{}={},\n".format(BASE_INDENT,k,str(v))
+    requests_kargs = ''
+    for k, v in sorted(kargs.items()):
+        requests_kargs += "{}{}={},\n".format(BASE_INDENT, k, str(v))
 
-    #auth_data = f'{BASE_INDENT}auth={parsed_context.auth}'
-    auth_data = "{}auth={}".format(BASE_INDENT,parsed_context.auth)
+    # auth_data = f'{BASE_INDENT}auth={parsed_context.auth}'
+    auth_data = "{}auth={}".format(BASE_INDENT, parsed_context.auth)
     proxy_data = "\n{}proxies={}".format(BASE_INDENT, parsed_context.proxy)
 
     formatter = {
@@ -140,4 +142,3 @@ def dict_to_pretty_string(the_dict, indent=4):
 
     return ("\n" + " " * indent).join(
         json.dumps(the_dict, sort_keys=True, indent=indent, separators=(',', ': ')).splitlines())
-
